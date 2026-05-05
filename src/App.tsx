@@ -2567,7 +2567,7 @@ function AppContent() {
         <DragDropContext onDragEnd={isSecondary ? () => {} : handleDragEnd}>
           <table
             className="border-collapse table-fixed text-[14px] font-normal"
-            style={{ width: appTable.getTotalSize() }}
+            style={{ width: appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0) }}
             onMouseOver={handleTableMouseOver}
             onMouseOut={handleTableMouseOut}
           >
@@ -2615,7 +2615,7 @@ function AppContent() {
                     <th
                       key={col.key}
                       className={`relative sticky top-0 z-20 text-[14px] font-bold text-[#2f3d49] p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] ${defaultWidthClass} bg-[#f3f3f3] data-[hovered-col=true]:bg-[#fce7f3]`}
-                      style={{ width: activeWidth }}
+                      style={{ width: activeWidth, minWidth: activeWidth, maxWidth: activeWidth }}
                     >
                       <div className="flex items-center gap-1">
                         {i + 1}. {col.name}{" "}
@@ -2770,6 +2770,8 @@ function AppContent() {
 
                                   const widthStyle = {
                                     width: activeWidth,
+                                    minWidth: activeWidth,
+                                    maxWidth: activeWidth,
                                   };
                                   
                                   const hoverClass =
