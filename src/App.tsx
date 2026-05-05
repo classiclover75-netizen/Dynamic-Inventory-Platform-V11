@@ -2566,8 +2566,12 @@ function AppContent() {
       >
         <DragDropContext onDragEnd={isSecondary ? () => {} : handleDragEnd}>
           <table
-            className="border-collapse table-fixed text-[14px] font-normal"
-            style={{ width: appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0), minWidth: appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0) }}
+            className="border-collapse w-max max-w-none text-[14px] font-normal"
+            style={{ 
+              width: `${appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0)}px`, 
+              minWidth: `${appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0)}px`,
+              maxWidth: 'none'
+            }}
             onMouseOver={handleTableMouseOver}
             onMouseOut={handleTableMouseOut}
           >
@@ -2576,7 +2580,7 @@ function AppContent() {
                 {!isSecondary && config.rowReorderEnabled && (
                   <th
                     className={`sticky top-0 z-20 text-center p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] bg-[#f3f3f3] data-[hovered-col=true]:bg-[#fce7f3]`}
-                    style={{ width: 60, minWidth: 60, maxWidth: 60 }}
+                    style={{ width: '60px', minWidth: '60px', maxWidth: '60px' }}
                   >
                     <input
                       type="checkbox"
@@ -2616,7 +2620,7 @@ function AppContent() {
                     <th
                       key={col.key}
                       className={`relative sticky top-0 z-20 text-[14px] font-bold text-[#2f3d49] p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] ${defaultWidthClass} bg-[#f3f3f3] data-[hovered-col=true]:bg-[#fce7f3]`}
-                      style={{ width: activeWidth, minWidth: activeWidth, maxWidth: activeWidth }}
+                      style={{ width: `${activeWidth}px`, minWidth: `${activeWidth}px`, maxWidth: `${activeWidth}px` }}
                     >
                       <div className="flex items-center gap-1">
                         {i + 1}. {col.name}{" "}
@@ -2733,7 +2737,7 @@ function AppContent() {
                                 {!isSecondary && config.rowReorderEnabled && (
                                   <td
                                     className={`text-center p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] data-[hovered-col=true]:bg-[#f0f7ff] data-[hovered-row=true]:bg-[#e8f0fe] data-[hovered-exact=true]:!bg-[#d2e3fc] data-[hovered-exact=true]:outline data-[hovered-exact=true]:outline-[3px] data-[hovered-exact=true]:outline-[#2b579a] data-[hovered-exact=true]:relative data-[hovered-exact=true]:z-10 data-[hovered-exact=true]:shadow-inner`}
-                                    style={{ width: 60, minWidth: 60, maxWidth: 60 }}
+                                    style={{ width: '60px', minWidth: '60px', maxWidth: '60px' }}
                                   >
                                     <div className="flex items-center justify-center gap-2">
                                       <div
@@ -2771,9 +2775,9 @@ function AppContent() {
                                           : 130);
 
                                   const widthStyle = {
-                                    width: activeWidth,
-                                    minWidth: activeWidth,
-                                    maxWidth: activeWidth,
+                                    width: `${activeWidth}px`,
+                                    minWidth: `${activeWidth}px`,
+                                    maxWidth: `${activeWidth}px`,
                                   };
                                   
                                   const hoverClass =
