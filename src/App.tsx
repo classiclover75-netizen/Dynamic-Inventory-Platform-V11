@@ -1474,27 +1474,60 @@ function AppContent() {
   const handleSaveColumnWidth = async (colKey: string, newWidth: number) => {
     if (!state.activePage || !activeConfig) return;
     
-    // Update the specific column's width in the array
+    const roundedWidth = Math.round(newWidth);
+
+    // 1. Update the active page's columns
     const updatedColumns = activeConfig.columns.map((c) =>
-      c.key === colKey ? { ...c, width: Math.round(newWidth) } : c
+      c.key === colKey ? { ...c, width: roundedWidth } : c
     );
     const updatedConfig = { ...activeConfig, columns: updatedColumns };
 
-    // Optimistically update frontend state
-    setState((prev) => ({
-      ...prev,
-      pageConfigs: { ...prev.pageConfigs, [state.activePage]: updatedConfig },
-    }));
+    // 2. Find all Live Trackers linked to this page
+    const linkedTrackers = Object.entries(state.pageConfigs)
+      .filter(([, cfg]) => (cfg as PageConfig).linkedSourcePage === state.activePage)
+      .map(([name]) => name);
 
-    // Persist to backend database silently
-    try {
-      await fetch(`/api/pageConfigs/${encodeURIComponent(state.activePage)}`, {
+    // 3. Prepare state mapping and API promises
+    const newPageConfigs = { ...state.pageConfigs, [state.activePage]: updatedConfig };
+    const apiPromises = [
+      fetch(`/api/pageConfigs/${encodeURIComponent(state.activePage)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ config: updatedConfig }),
-      });
+      })
+    ];
+
+    // 4. Update the specific column in every linked tracker silently
+    linkedTrackers.forEach(trackerName => {
+      const trackerConfig = state.pageConfigs[trackerName];
+      if (trackerConfig) {
+        const updatedTrackerCols = trackerConfig.columns.map(c => 
+          c.key === colKey ? { ...c, width: roundedWidth } : c
+        );
+        const newTrackerConfig = { ...trackerConfig, columns: updatedTrackerCols };
+        newPageConfigs[trackerName] = newTrackerConfig;
+        
+        apiPromises.push(
+          fetch(`/api/pageConfigs/${encodeURIComponent(trackerName)}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ config: newTrackerConfig }),
+          })
+        );
+      }
+    });
+
+    // 5. Update frontend UI instantly for all pages
+    setState((prev) => ({
+      ...prev,
+      pageConfigs: newPageConfigs,
+    }));
+
+    // 6. Save all updates to the database concurrently
+    try {
+      await Promise.all(apiPromises);
     } catch (err) {
-      console.error("Failed to save column width", err);
+      console.error("Failed to sync column widths to trackers", err);
     }
   };
 
