@@ -2566,8 +2566,10 @@ function AppContent() {
       >
         <DragDropContext onDragEnd={isSecondary ? () => {} : handleDragEnd}>
           <table
-            className="border-collapse table-fixed w-max max-w-none text-[14px] font-normal"
-            style={{ width: "max-content" }}
+            className="border-separate border-spacing-0 table-fixed w-max max-w-none text-[14px] font-normal"
+            style={{ 
+              width: `${appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0)}px`
+            }}
             onMouseOver={handleTableMouseOver}
             onMouseOut={handleTableMouseOut}
           >
