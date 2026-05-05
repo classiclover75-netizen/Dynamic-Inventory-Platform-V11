@@ -2567,7 +2567,7 @@ function AppContent() {
         <DragDropContext onDragEnd={isSecondary ? () => {} : handleDragEnd}>
           <table
             className="border-collapse table-fixed text-[14px] font-normal"
-            style={{ width: appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0) }}
+            style={{ width: appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0), minWidth: appTable.getTotalSize() + (!isSecondary && config.rowReorderEnabled ? 60 : 0) }}
             onMouseOver={handleTableMouseOver}
             onMouseOut={handleTableMouseOut}
           >
@@ -2575,7 +2575,8 @@ function AppContent() {
               <tr>
                 {!isSecondary && config.rowReorderEnabled && (
                   <th
-                    className={`sticky top-0 z-20 text-center p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] w-[60px] bg-[#f3f3f3] data-[hovered-col=true]:bg-[#fce7f3]`}
+                    className={`sticky top-0 z-20 text-center p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] bg-[#f3f3f3] data-[hovered-col=true]:bg-[#fce7f3]`}
+                    style={{ width: 60, minWidth: 60, maxWidth: 60 }}
                   >
                     <input
                       type="checkbox"
@@ -2732,6 +2733,7 @@ function AppContent() {
                                 {!isSecondary && config.rowReorderEnabled && (
                                   <td
                                     className={`text-center p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] data-[hovered-col=true]:bg-[#f0f7ff] data-[hovered-row=true]:bg-[#e8f0fe] data-[hovered-exact=true]:!bg-[#d2e3fc] data-[hovered-exact=true]:outline data-[hovered-exact=true]:outline-[3px] data-[hovered-exact=true]:outline-[#2b579a] data-[hovered-exact=true]:relative data-[hovered-exact=true]:z-10 data-[hovered-exact=true]:shadow-inner`}
+                                    style={{ width: 60, minWidth: 60, maxWidth: 60 }}
                                   >
                                     <div className="flex items-center justify-center gap-2">
                                       <div
