@@ -1471,6 +1471,33 @@ function AppContent() {
     }
   };
 
+  const handleSaveColumnWidth = async (colKey: string, newWidth: number) => {
+    if (!state.activePage || !activeConfig) return;
+    
+    // Update the specific column's width in the array
+    const updatedColumns = activeConfig.columns.map((c) =>
+      c.key === colKey ? { ...c, width: Math.round(newWidth) } : c
+    );
+    const updatedConfig = { ...activeConfig, columns: updatedColumns };
+
+    // Optimistically update frontend state
+    setState((prev) => ({
+      ...prev,
+      pageConfigs: { ...prev.pageConfigs, [state.activePage]: updatedConfig },
+    }));
+
+    // Persist to backend database silently
+    try {
+      await fetch(`/api/pageConfigs/${encodeURIComponent(state.activePage)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ config: updatedConfig }),
+      });
+    } catch (err) {
+      console.error("Failed to save column width", err);
+    }
+  };
+
   const handleCreateColumns = async (newColumns: Column[]) => {
     // Set default width of 150 for sale and range columns
     const columnsWithDefaults = newColumns.map(c => {
@@ -2390,6 +2417,28 @@ function AppContent() {
     columnResizeMode: "onChange",
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const sizingInfo = appTable.getState().columnSizingInfo;
+  const sizing = appTable.getState().columnSizing;
+  const prevResizingColRef = useRef<string | boolean>(false);
+
+  useEffect(() => {
+    const isResizing = sizingInfo.isResizingColumn;
+    
+    if (isResizing) {
+      // User is currently dragging
+      prevResizingColRef.current = isResizing;
+    } else if (prevResizingColRef.current && !isResizing) {
+      // User just released the mouse (Resize Ended)
+      const colKey = prevResizingColRef.current as string;
+      const finalWidth = sizing[colKey];
+      
+      if (colKey && finalWidth) {
+        handleSaveColumnWidth(colKey, finalWidth);
+      }
+      prevResizingColRef.current = false;
+    }
+  }, [sizingInfo.isResizingColumn, sizing]);
 
   const parentRef = useRef<HTMLDivElement>(null);
   const savedPrimScroll = useRef(0);
