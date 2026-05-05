@@ -2528,7 +2528,7 @@ function AppContent() {
 
     return (
       <div
-        className="flex-1 min-h-0 overflow-auto border-none rounded-none m-0 p-0 relative outline-none"
+        className="flex-1 min-h-0 overflow-x-auto overflow-y-auto border-none rounded-none m-0 p-0 relative outline-none"
         ref={parentRef}
         tabIndex={0}
         onKeyDown={(e) => {
@@ -2566,7 +2566,8 @@ function AppContent() {
       >
         <DragDropContext onDragEnd={isSecondary ? () => {} : handleDragEnd}>
           <table
-            className="w-full border-collapse table-fixed text-[14px] font-normal"
+            className="border-collapse table-fixed text-[14px] font-normal"
+            style={{ width: appTable.getTotalSize() }}
             onMouseOver={handleTableMouseOver}
             onMouseOut={handleTableMouseOut}
           >
@@ -2603,19 +2604,18 @@ function AppContent() {
                           ? 137
                           : 130);
 
-                  const finalWidthStyle = { width: `${activeWidth}px`, minWidth: `${activeWidth}px` };
                   const defaultWidthClass =
                     col.key === "sr"
                       ? "text-center"
                       : col.type === "image"
-                        ? "w-[137px] text-center"
-                        : "min-w-[130px] text-left";
+                        ? "text-center"
+                        : "text-left";
 
                   return (
                     <th
                       key={col.key}
-                      className={`relative sticky top-0 z-20 text-[14px] font-bold text-[#2f3d49] p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] ${!col.width && col.key !== "sr" ? defaultWidthClass : col.key === "sr" || col.type === "image" ? "text-center" : "text-left"} bg-[#f3f3f3] data-[hovered-col=true]:bg-[#fce7f3]`}
-                      style={finalWidthStyle}
+                      className={`relative sticky top-0 z-20 text-[14px] font-bold text-[#2f3d49] p-1.5 border-r-[length:medium] border-b-[length:medium] border-[#e0e0e0] ${defaultWidthClass} bg-[#f3f3f3] data-[hovered-col=true]:bg-[#fce7f3]`}
+                      style={{ width: activeWidth }}
                     >
                       <div className="flex items-center gap-1">
                         {i + 1}. {col.name}{" "}
@@ -2769,8 +2769,7 @@ function AppContent() {
                                           : 130);
 
                                   const widthStyle = {
-                                    width: `${activeWidth}px`,
-                                    minWidth: `${activeWidth}px`,
+                                    width: activeWidth,
                                   };
                                   
                                   const hoverClass =
